@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect
-from calendar import app
+from calendar_app import app
 # from calendar.models import User, Post
 
 @app.route("/")
