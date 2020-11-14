@@ -1,19 +1,35 @@
 from datetime import datetime
 from calendar_app import db
 
+# association table for many to many relationship between user and events
+shared_events = db.Table('event_association',
+    db.Column('event_id', db.Integer, db.ForeignKey('event.id')), 
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+    db.UniqueConstraint('event_id', 'user_id', name='unique_shared_events')
+)
 
-association_table = Table('association', Base.metadata,
-    Column('event_id', Integer, ForeignKey('event.id')),
-    Column('user_id', Integer, ForeignKey('user.id'))
+# association table for many to many relationship between two users
+shared_users = db.Table('user_association',
+    db.Column('sharing_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('shared_to_id', db.Integer, db.ForeignKey('user.id')),
+    db.UniqueConstraint('sharing_id', 'shared_to_id', name='unique_shares')
 )
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    events = relationship(
+    events = db.relationship(
         "Event",
-        secondary=association_table,
-        back_populates="User")
+        secondary=shared_events,
+        backref=db.backref('user', lazy=True))
+
+    # shared users
+    shared_with = db.relationship(
+        'User', 
+        secondary=shared_users,
+        primaryjoin=id==shared_users.c.sharing_id,
+        secondaryjoin=id==shared_users.c.shared_to_id)
+
 
     def __repr__(self):
         return f"User('{self.email}')"
@@ -23,14 +39,14 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    # date = db.Column(db.DateTime, nullable=False)
-    # start = db.Column(db.DateTime, nullable=False)
-    # end = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.Date, nullable=False) 
+    start = db.Column(db.Time, nullable=False) 
+    end = db.Column(db.Time, nullable=False) 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    events = relationship(
-        "User",
-        secondary=association_table,
-        back_populates="Event")
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.start}')"
+
+
+# if __name__ == "__main__":
+    
