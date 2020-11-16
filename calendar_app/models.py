@@ -4,7 +4,7 @@ from calendar_app import db
 # association table for many to many relationship between user and events
 shared_events = db.Table('event_association',
     db.Column('event_id', db.Integer, db.ForeignKey('event.id')), 
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.UniqueConstraint('event_id', 'user_id', name='unique_shared_events')
 )
 
