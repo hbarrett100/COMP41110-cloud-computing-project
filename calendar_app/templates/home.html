@@ -1,8 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<table class="table" id="cal-table">
-    <thead class="thead-dark">
+<div>
+    <h1 id="month-name"></h1>
+    <button type="button" class="btn btn-light" id="next-month" class="move-month">Prev</button>
+    <button type="button" class="btn btn-light" id="prev-month" class="move-month">Next</button>
+</div>
+<table class="table table-bordered" id="cal-table">
+    <thead class="table-info">
         <tr>
             <th scope="col">Mon</th>
             <th scope="col">Tue</th>

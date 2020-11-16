@@ -1,6 +1,11 @@
 $(document).ready(function () {
     console.log("Ready!");
 
+    // month names for top of calendar
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+    ];
+
     // create function to populate calendar - will be called for each month when arrows pressed
     function daysInMonth (month, year) { 
         return new Date(year, month, 0).getDate(); 
@@ -19,6 +24,8 @@ $(document).ready(function () {
         startDay = 6;
     }
     
+    var curMonthName = monthNames[d.getMonth()];
+    $('#month-name').html(curMonthName);
     var offset = 1-startDay;
 
     // populate table with dates

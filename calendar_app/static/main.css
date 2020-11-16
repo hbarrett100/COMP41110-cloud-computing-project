@@ -1,0 +1,24 @@
+.table {
+    border-radius: 5px;
+    width: 80%;
+    margin: 0px auto;
+    float: none;
+}
+
+#month-name {
+    border-radius: 5px;
+    width: 80%;
+    margin: 0px auto;
+    float: none;
+    margin-top: 60px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+th,td {
+    text-align: center;
+    font-size: 1.5em;
+}
+/* .table {
+    margin: 0 auto
+ } */
