@@ -1,8 +1,13 @@
 .table {
     border-radius: 5px;
     width: 80%;
+    height: 100%;
     margin: 0px auto;
     float: none;
+}
+
+#table-div{
+    height: 650px;
 }
 
 #month-name {
@@ -10,7 +15,7 @@
     width: 80%;
     margin: 0px auto;
     float: none;
-    margin-top: 60px;
+    margin-top: 40px;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -19,6 +24,12 @@ th,td {
     text-align: center;
     font-size: 1.5em;
 }
-/* .table {
-    margin: 0 auto
- } */
+
+td {
+    cursor: pointer;
+}
+
+
+.table-cell:hover {
+    background-color: blueviolet;
+}

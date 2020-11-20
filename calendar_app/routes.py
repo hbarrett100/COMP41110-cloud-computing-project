@@ -7,7 +7,6 @@ from calendar_app.models import User, Event
 @app.route("/home")
 def home():
     user_email = request.args.get('email') #get email entered in form on login page
-
     # add user to database if they don't already exist 
     existing_user = User.query.filter_by(email=user_email).first()
     if not existing_user:
