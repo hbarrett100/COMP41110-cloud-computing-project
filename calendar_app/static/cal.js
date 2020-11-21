@@ -7,6 +7,9 @@ var UIController = (function () {
     var d = new Date;
     var currentMonth = d.getMonth();
     var currentYear = d.getFullYear();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
 
     return {
         displayedMonthOffset: 0,
@@ -20,10 +23,6 @@ var UIController = (function () {
             var month = newD.getMonth();
             var year = newD.getFullYear();
 
-            console.log(" month:" + month);
-            const monthNames = ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ];
 
             // display month and year above table
             var curMonthName = monthNames[month];
@@ -60,14 +59,30 @@ var UIController = (function () {
                     } else if (counter > daysInMonth) {
                         $('#cal-table').find('tbody tr').eq(-1).append("<td> " + " " + "</td>")
                     } else {
-                        $('#cal-table').find('tbody tr').eq(-1).append("<td> " + counter++ + "</td>")
+                        $('#cal-table').find('tbody tr').eq(-1).append("<td class='table-cell' > " + counter++ + "</td>")
                     }
                 }
             }
-            $('#cal-table').find('tbody tr td').addClass("table-cell");
-            $('#cal-table').find('tbody tr td').attr("data-toggle",'modal');
-            $('#cal-table').find('tbody tr td').attr('data-target', 'event-modal');
+            // assign modal attributes to all tds
+            // $('#cal-table').find('tbody tr td').addClass("table-cell");
+            $('.table-cell').attr("data-toggle",'modal');
+            $('.table-cell').attr('data-target', 'event-modal');
+        },
 
+        populateEventModal: function(thisElem) {
+            // set date selected as title of modal
+            var monthYear = $('#month-name').text();
+            $('#modal-header').html(thisElem.innerHTML + " " + monthYear);
+
+        },
+
+        newEventModal: function() {
+            console.log("inside fn");
+            datepicker = $("#date").flatpickr({
+                dateFormat: 'd-m-yy',
+                defaultDate: new Date(),
+                minDate: "today"
+            });
         }
     }
 })();
@@ -75,29 +90,30 @@ var UIController = (function () {
 var controller = (function (rqsCtrl, UICtrl) {
 
     var setupEventListeners = function () {
-        console.log("event listeners set up");
 
         // add on-click to next-month button
         $("#next").click(function() {
-            console.log("next month clicked");
             UICtrl.displayedMonthOffset++;
-            console.log("offset:");
-            console.log(UICtrl.displayedMonthOffset);
             UICtrl.populateCalendarTable();
             });
 
         $("#prev").click(function() {
             UICtrl.displayedMonthOffset--;
-            console.log("offset:");
-            console.log(UICtrl.displayedMonthOffset);
             UICtrl.populateCalendarTable();
             });
 
-        $('#cal-table').on('click','td',function(){
-            console.log("td clicked!");
+        $('#cal-table').on('click','.table-cell',function(event){
             $("#event-modal").modal('show');
+            
+            let thisElem = event.target
+            UICtrl.populateEventModal(thisElem)
+           
         });
-    
+
+        $("#create").click(function() {
+           console.log("Create");
+           UICtrl.newEventModal();
+            });
     };
 
    
@@ -106,7 +122,6 @@ var controller = (function (rqsCtrl, UICtrl) {
             
             $(document).ready(function () {
                 setupEventListeners();
-                console.log("ready")
                 UICtrl.populateCalendarTable();
             });
 
