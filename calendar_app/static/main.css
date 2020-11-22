@@ -41,6 +41,8 @@ td {
  .modal.fade{
     opacity:1;
   }
+  /* .modal-content { background: #E0E0E0 !important; } */
+
 
   /* remove modal transition effect */
   .modal.fade .modal-dialog {
@@ -48,3 +50,9 @@ td {
      -moz-transform: translate(0);
      transform: translate(0);
   }
+
+  /* hide event details by default */
+  #event-collapse, #event-details-btn   {
+      display:none;
+  }
+

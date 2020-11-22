@@ -69,20 +69,42 @@ var UIController = (function () {
             $('.table-cell').attr('data-target', 'event-modal');
         },
 
-        populateEventModal: function(thisElem) {
+        populateEventCard: function(thisElem) {
             // set date selected as title of modal
             var monthYear = $('#month-name').text();
-            $('#modal-header').html(thisElem.innerHTML + " " + monthYear);
+            $('#card-title').html(thisElem.innerHTML + " " + monthYear);
 
         },
 
         newEventModal: function() {
-            console.log("inside fn");
-            datepicker = $("#date").flatpickr({
+            // set up date and time pickers
+            $("#datepicker").flatpickr({
                 dateFormat: 'd-m-yy',
                 defaultDate: new Date(),
                 minDate: "today"
             });
+             $('.timepicker').flatpickr({
+                enableTime: true,
+                defaultDate: new Date().getHours() + ":" + new Date().getMinutes(),
+                dateFormat: 'H:i',
+                noCalendar: true,
+                time_24hr: true,
+                minuteIncrement: 30
+            });
+        },
+
+        setAllDayEvent: function() {
+            $('#start-timepicker').val("");
+            $('#end-timepicker').val("");
+           $('#start-timepicker').prop("disabled", true);
+           $('#end-timepicker').prop("disabled", true);
+        
+        },
+
+        unsetAllDayEvent: function() {
+            console.log("inside unset")
+            $('#start-timepicker').removeAttr("disabled");
+            $('#end-timepicker').removeAttr("disabled");
         }
     }
 })();
@@ -103,17 +125,28 @@ var controller = (function (rqsCtrl, UICtrl) {
             });
 
         $('#cal-table').on('click','.table-cell',function(event){
-            $("#event-modal").modal('show');
+            // $("#event-modal").modal('show');
             
             let thisElem = event.target
-            UICtrl.populateEventModal(thisElem)
+            UICtrl.populateEventCard(thisElem)
            
         });
 
         $("#create").click(function() {
            console.log("Create");
            UICtrl.newEventModal();
+         
             });
+
+        $('#all-day-check').change(function() {
+            if ($('#all-day-check').is(':checked'))
+                UICtrl.setAllDayEvent();
+            else 
+                UICtrl.unsetAllDayEvent();
+            })
+           
+
+
     };
 
    
