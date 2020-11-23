@@ -1,6 +1,14 @@
 var requestsController = (function () {
 
-})(); 
+    return {
+        // new event
+        createEvent: function (values) {
+            // pass values from form to route in post request
+            console.log("inside create event fn");
+            return $.post("/create_event", values);
+        }
+    }
+})();
 
 var UIController = (function () {
 
@@ -8,8 +16,8 @@ var UIController = (function () {
     var currentMonth = d.getMonth();
     var currentYear = d.getFullYear();
     const monthNames = ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ];
+        "July", "August", "September", "October", "November", "December"
+    ];
 
     return {
         displayedMonthOffset: 0,
@@ -38,10 +46,10 @@ var UIController = (function () {
             }
 
             // day offset for calendar display
-            let dayOffset = startDay -1;
-            console.log("offset: "+ dayOffset);
+            let dayOffset = startDay - 1;
+            console.log("offset: " + dayOffset);
             // number of days in month for calendar display
-            let daysInMonth = new Date(year, month+1, 0).getDate();
+            let daysInMonth = new Date(year, month + 1, 0).getDate();
             console.log("Days in month: " + daysInMonth);
 
             // populate table with dates
@@ -49,7 +57,7 @@ var UIController = (function () {
             console.log("counter: " + counter);
 
             // for (var i = 0; i < 6; i++) {
-            while (counter <= daysInMonth){
+            while (counter <= daysInMonth) {
                 $('#cal-table').find('tbody').append("<tr></tr>");
                 for (var j = 0; j < 7; j++) {
                     if (dayOffset > 0) {
@@ -65,25 +73,27 @@ var UIController = (function () {
             }
             // assign modal attributes to all tds
             // $('#cal-table').find('tbody tr td').addClass("table-cell");
-            $('.table-cell').attr("data-toggle",'modal');
+            $('.table-cell').attr("data-toggle", 'modal');
             $('.table-cell').attr('data-target', 'event-modal');
         },
 
-        populateEventCard: function(thisElem) {
+        populateEventCard: function (thisElem) {
             // set date selected as title of modal
             var monthYear = $('#month-name').text();
             $('#card-title').html(thisElem.innerHTML + " " + monthYear);
 
         },
 
-        newEventModal: function() {
+        // modal to create new event
+        newEventModal: function () {
+            $('#title').html('');
             // set up date and time pickers
             $("#datepicker").flatpickr({
                 dateFormat: 'd-m-yy',
                 defaultDate: new Date(),
                 minDate: "today"
             });
-             $('.timepicker').flatpickr({
+            $('.timepicker').flatpickr({
                 enableTime: true,
                 defaultDate: new Date().getHours() + ":" + new Date().getMinutes(),
                 dateFormat: 'H:i',
@@ -93,18 +103,37 @@ var UIController = (function () {
             });
         },
 
-        setAllDayEvent: function() {
+        setAllDayEvent: function () {
             $('#start-timepicker').val("");
             $('#end-timepicker').val("");
-           $('#start-timepicker').prop("disabled", true);
-           $('#end-timepicker').prop("disabled", true);
-        
+            $('#start-timepicker').prop("disabled", true);
+            $('#end-timepicker').prop("disabled", true);
+
         },
 
-        unsetAllDayEvent: function() {
+        unsetAllDayEvent: function () {
             console.log("inside unset")
             $('#start-timepicker').removeAttr("disabled");
             $('#end-timepicker').removeAttr("disabled");
+        },
+
+        // get values out of new event form 
+        getDataFromEventForm: function () {
+            var date = $('#datepicker').val();
+            var startTime = $('#start-timepicker').val();
+            var endTime = $('#end-timepicker').val();
+            var title = $('#title').val();
+            var description = $('#description').val();
+            console.log(date, startTime, endTime, title, description);
+
+            return {
+                email: email,
+                date: date,
+                startTime: startTime,
+                endTime: endTime,
+                title: title,
+                description: description
+            }
         }
     }
 })();
@@ -112,47 +141,63 @@ var UIController = (function () {
 var controller = (function (rqsCtrl, UICtrl) {
 
     var setupEventListeners = function () {
-
-        // add on-click to next-month button
-        $("#next").click(function() {
+        3
+        // next-month button
+        $("#next").click(function () {
             UICtrl.displayedMonthOffset++;
             UICtrl.populateCalendarTable();
-            });
-
-        $("#prev").click(function() {
-            UICtrl.displayedMonthOffset--;
-            UICtrl.populateCalendarTable();
-            });
-
-        $('#cal-table').on('click','.table-cell',function(event){
-            // $("#event-modal").modal('show');
-            
-            let thisElem = event.target
-            UICtrl.populateEventCard(thisElem)
-           
         });
 
-        $("#create").click(function() {
-           console.log("Create");
-           UICtrl.newEventModal();
-         
-            });
+        // previous month 
+        $("#prev").click(function () {
+            UICtrl.displayedMonthOffset--;
+            UICtrl.populateCalendarTable();
+        });
 
-        $('#all-day-check').change(function() {
+        // all table cells
+        $('#cal-table').on('click', '.table-cell', function (event) {
+            let thisElem = event.target
+            UICtrl.populateEventCard(thisElem)
+
+        });
+
+        // create event
+        $("#create").click(function () {
+            console.log("Create");
+            UICtrl.newEventModal();
+
+        });
+
+        // full day event checkbox
+        $('#all-day-check').change(function () {
             if ($('#all-day-check').is(':checked'))
                 UICtrl.setAllDayEvent();
-            else 
+            else
                 UICtrl.unsetAllDayEvent();
-            })
-           
+        })
+
+        // save new event button 
+        $("#save-event").click(function () {
+            // show error if title not given by user
+            if ($('#title').val() == '') {
+                $('#title-error').show();
+
+                // only create event once title has been entered
+            } else {
+                $('#title-error').hide();
+                $("#create-event").modal('hide');
+                var formValues = UICtrl.getDataFromEventForm();
+                rqsCtrl.createEvent(formValues);
+            }
+        });
 
 
     };
 
-   
+
     return {
         init: function () {
-            
+
             $(document).ready(function () {
                 setupEventListeners();
                 UICtrl.populateCalendarTable();

@@ -4,9 +4,11 @@
   <div class="row">
     <div class="col-12">
       <h1 id="month-name"></h1>
-      <button type="button" class="btn btn-light" id="next" class="move-month">>></button>
       <button type="button" class="btn btn-light" id="prev" class="move-month"><<</button>
-      <button type="button" class="btn btn-light" id="create" data-toggle="modal" data-target="#create-event">Create Event</button>
+      <button type="button" class="btn btn-light" id="next" class="move-month">>></button>
+      
+          <button type="button" class="btn btn-light" id="create" data-toggle="modal" data-target="#create-event">Create
+            Event</button>
     </div>
   </div>
   <div class="row">
@@ -16,7 +18,7 @@
           Events
         </div>
         <div class="card-body">
-         
+
           Click a date to view events.
           <!-- <ul class="list-group list-group-flush">
             <li class="list-group-item">Event1</li>
@@ -27,102 +29,88 @@
       </div>
     </div>
     <div class="col-9">
-    <div id="table-div">
+      <div id="table-div">
         <table class="table table-bordered" id="cal-table">
-            <thead class="table-info">
-                <tr>
-                    <th scope="col">Mon</th>
-                    <th scope="col">Tue</th>
-                    <th scope="col">Wed</th>
-                    <th scope="col">Thu</th>
-                    <th scope="col">Fri</th>
-                    <th scope="col">Sat</th>
-                    <th scope="col">Sun</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
+          <thead class="table-info">
+            <tr>
+              <th scope="col">Mon</th>
+              <th scope="col">Tue</th>
+              <th scope="col">Wed</th>
+              <th scope="col">Thu</th>
+              <th scope="col">Fri</th>
+              <th scope="col">Sat</th>
+              <th scope="col">Sun</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
         </table>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- modal to display event details when table cell clicked -->
-<!-- 
-<div class="modal fade" id="event-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal-header"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="event-details">
-        No events on this date.
-        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#event-collapse" aria-expanded="false" aria-controls="event-collapse" id="event-details-btn">deets</button>
-        <div class="collapse" id="event-collapse">
-          <div class="card card-body">
-            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-          </div>
-        </div>
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
 
 <!-- modal to create event -->
-
-
-<!-- Modal -->
 <div class="modal fade" id="create-event" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New Event</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Create New Event</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <!-- <input type="text" class="form-control" data-toggle="datepicker" id="date-pick"> -->
-        <form> 
+        <form>
           <div class="form-group">
             <label for="datepicker">Date:</label>
-            <input type="text" id="datepicker">
+            <input type="text" id="datepicker" class="form-control">
           </div>
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="all-day-check">
-            <label class="form-check-label" for="exampleCheck1">Full day event</label>
+            <input type="checkbox" class="form-check-input" id="all-day-check" aria-describedby="help-box">
+            <label class="form-check-label" for="all-day-check">Full day event</label>
+            <small id="help-box" class="form-text text-muted">
+              Selecting full day event will default start time to 00:00 and end time to 23:59.
+            </small>
           </div>
           <div class="form-group">
-            <label for="start-timepicker">Start time:</label>
-            <input type="text" class="timepicker" id="start-timepicker">
-          </div>
-          <div class="form-group">
-            <label for="end-timepicker">End time:</label>
-            <input type="text" class="timepicker" id="end-timepicker">
-          </div>
-          <div class="form-group">
-            <label for="title">Event title: </label>
-            <input type="text" id="title">
-          </div>
-          <div class="form-group">
-            <label for="description">Description: </label>
-            <textarea class="form-control" id="description" rows="3"></textarea>
-          </div>
-        </form>
+            <div class="form-row">
+              <div class="col">
+                <label for="start-timepicker">Start time:</label>
+                <input type="text" class="timepicker form-control" id="start-timepicker">
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="end-timepicker">End time:</label>
+                  <input type="text" class="timepicker form-control" id="end-timepicker">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="title">Event title: </label>
+              <input type="text" id="title" class="form-control">
+            </div>
+            <div class="alert alert-danger" id="title-error" role="alert">
+              Event title must be entered
+            </div>
 
+            <div class="form-group">
+              <label for="description">Description: </label>
+              <textarea class="form-control" id="description" rows="3"></textarea>
+            </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary" id="save-event">Save</button>
       </div>
     </div>
   </div>
 </div>
+
+
 
 <script src="{{url_for('static', filename='cal.js')}}"></script>
 

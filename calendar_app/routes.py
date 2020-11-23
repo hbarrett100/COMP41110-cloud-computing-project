@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from calendar_app import app, db
 from calendar_app.models import User, Event
+from datetime import datetime
 
 # home page
 
@@ -20,3 +21,34 @@ def home():
 @app.route("/login")
 def login():
     return render_template('login.html')
+
+# create new event
+@app.route("/create_event", methods=['GET', 'POST'])
+def create_event():
+    print("inside create_event route")
+    if request.method == 'POST':
+        date = request.form.get("date")
+        datetime_obj = datetime.strptime(date, '%d-%m-%Y').strftime('%Y-%m-%d')
+        print("date: ", datetime_obj)
+
+        start = request.form.get("startTime")
+        start = start + ":00"
+        
+        end = request.form.get("endTime")
+        end = end + ":00"
+
+        event_title = request.form.get("title")
+        event_description = request.form.get("description")
+
+
+        # get id of event creator
+        email = request.form.get("email")
+        user = User.query.filter_by(email=email).first()
+        user_id = user.id
+        
+        new_event = Event(title=event_title, description=event_description, date=datetime_obj, start=start, end=end, user_id=user_id)
+        db.session.add(new_event)
+        db.session.commit()
+
+        
+    return '' 

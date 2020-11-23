@@ -30,6 +30,9 @@ class User(db.Model):
         primaryjoin=id==shared_users.c.sharing_id,
         secondaryjoin=id==shared_users.c.shared_to_id)
 
+    def __init__(self, email):
+        self.email = email
+
 
     def __repr__(self):
         return f"User('{self.email}')"
