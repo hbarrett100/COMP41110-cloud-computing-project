@@ -2,6 +2,7 @@ from flask import render_template, url_for, flash, redirect, request
 from calendar_app import app, db
 from calendar_app.models import User, Event
 from datetime import datetime
+from sqlalchemy.orm import load_only
 
 # home page
 
@@ -46,9 +47,24 @@ def create_event():
         user = User.query.filter_by(email=email).first()
         user_id = user.id
         
+        
         new_event = Event(title=event_title, description=event_description, date=datetime_obj, start=start, end=end, user_id=user_id)
         db.session.add(new_event)
         db.session.commit()
 
         
     return '' 
+
+
+# get users events from database to populate calendar
+@app.route("/get_events", methods=['GET', 'POST'])
+def get_events():
+    # get user id using email
+    email = request.args.get("email")
+    print("email", email)
+    user = User.query.filter_by(email=email).first()
+
+    # get events filter by user id
+    events = Event.query.filter_by(user_id=user.id).first()
+    print("all events: ", events)
+    return ' '

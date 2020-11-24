@@ -1,12 +1,23 @@
 var requestsController = (function () {
 
     return {
+
+        populateCalendarWithEvents: function () {
+            // send get request for all 
+            $.get("/get_events", {email: email})
+                .done(function (data) {
+                    console.log("get finished")
+                    console.log(data);
+                });
+        },
         // new event
         createEvent: function (values) {
             // pass values from form to route in post request
             console.log("inside create event fn");
             return $.post("/create_event", values);
         }
+
+
     }
 })();
 
@@ -75,6 +86,8 @@ var UIController = (function () {
             // $('#cal-table').find('tbody tr td').addClass("table-cell");
             $('.table-cell').attr("data-toggle", 'modal');
             $('.table-cell').attr('data-target', 'event-modal');
+
+
         },
 
         populateEventCard: function (thisElem) {
@@ -201,6 +214,7 @@ var controller = (function (rqsCtrl, UICtrl) {
             $(document).ready(function () {
                 setupEventListeners();
                 UICtrl.populateCalendarTable();
+                rqsCtrl.populateCalendarWithEvents();
             });
 
         }
