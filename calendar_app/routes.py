@@ -65,6 +65,11 @@ def get_events():
     user = User.query.filter_by(email=email).first()
 
     # get events filter by user id
-    events = Event.query.filter_by(user_id=user.id).first()
-    print("all events: ", events)
+    all_events = []
+    events = Event.query.filter_by(user_id=user.id).all()
+
+    for event in events: 
+        all_events.append(event.to_dict())
+
+    print("all events: ", all_events)
     return ' '

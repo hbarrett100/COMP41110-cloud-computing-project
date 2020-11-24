@@ -48,7 +48,17 @@ class Event(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.start}')"
+        return f"Post('{self.title}', '{self.description}', '{self.date}', '{self.start}', '{self.end}')"
+
+    def to_dict(self):
+
+        d = {'title' : self.title,
+        'description' : self.description, 
+        'date': self.date, 
+        'start':self.start, 
+        'end':self.end}
+
+        return d
 
 
 # if __name__ == "__main__":
