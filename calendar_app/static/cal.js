@@ -2,12 +2,13 @@ var requestsController = (function () {
 
     return {
 
-        populateCalendarWithEvents: function () {
-            // send get request for all 
-            $.get("/get_events", {email: email})
+        populateCalendarWithEvents: function (month, year) {
+            // send get request for all events in current month and year
+            $.get("/get_events", {email: email, month:month+1, year:year})
                 .done(function (data) {
-                    console.log("get finished")
-                    console.log(data);
+                    console.log("eventssss")
+                    console.log(data)
+                //     return data;
                 });
         },
         // new event
@@ -33,6 +34,15 @@ var UIController = (function () {
     return {
         displayedMonthOffset: 0,
 
+        // get current month and year
+        getCurrentMonthYear: function() {
+            return {
+                month: currentMonth,
+                year: currentYear
+            }
+        },
+
+        // populate calendar table with dates and events
         populateCalendarTable: function () {
 
             $("#cal-table > tbody").empty();
@@ -83,15 +93,15 @@ var UIController = (function () {
                 }
             }
             // assign modal attributes to all tds
-            // $('#cal-table').find('tbody tr td').addClass("table-cell");
             $('.table-cell').attr("data-toggle", 'modal');
             $('.table-cell').attr('data-target', 'event-modal');
 
 
         },
 
+        // populate event div with details of events
         populateEventCard: function (thisElem) {
-            // set date selected as title of modal
+            // set date selected as title of div
             var monthYear = $('#month-name').text();
             $('#card-title').html(thisElem.innerHTML + " " + monthYear);
 
@@ -154,7 +164,7 @@ var UIController = (function () {
 var controller = (function (rqsCtrl, UICtrl) {
 
     var setupEventListeners = function () {
-        3
+        
         // next-month button
         $("#next").click(function () {
             UICtrl.displayedMonthOffset++;
@@ -214,7 +224,11 @@ var controller = (function (rqsCtrl, UICtrl) {
             $(document).ready(function () {
                 setupEventListeners();
                 UICtrl.populateCalendarTable();
-                rqsCtrl.populateCalendarWithEvents();
+                // get current month and year
+                monthAndYear = UICtrl.getCurrentMonthYear();
+                eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year'])
+                console.log("events");
+                console.log(eventsInMonth);
             });
 
         }

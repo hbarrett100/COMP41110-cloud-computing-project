@@ -23,6 +23,7 @@
 th,td {
     text-align: center;
     font-size: 1.5em;
+    font-weight: normal;
 }
 
 td {
@@ -31,7 +32,7 @@ td {
 
 
 .table-cell:hover {
-    background-color: blueviolet;
+    background-color: #E8E8E8;
 }
 
 .modal-backdrop {
@@ -60,3 +61,18 @@ td {
       display: none;
   }
 
+
+  #navbar-cal {
+    background-color: #DDAF94;
+  }
+
+  thead {
+      background-color: #266150;
+  }
+
+  .card-header {
+    background-color:  #266150;
+  }
+
+  .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-primary:focus, .btn-primary:active:focus {
+    background-color: #F4976C;}

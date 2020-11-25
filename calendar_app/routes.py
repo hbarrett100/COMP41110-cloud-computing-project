@@ -3,9 +3,10 @@ from calendar_app import app, db
 from calendar_app.models import User, Event
 from datetime import datetime
 from sqlalchemy.orm import load_only
+from sqlalchemy import extract  
+import json
 
 # home page
-
 @app.route("/home")
 def home():
     user_email = request.args.get('email') #get email entered in form on login page
@@ -59,17 +60,31 @@ def create_event():
 # get users events from database to populate calendar
 @app.route("/get_events", methods=['GET', 'POST'])
 def get_events():
-    # get user id using email
+    # 1. if no date given in request
+
+    # get email, month and year out of request
     email = request.args.get("email")
-    print("email", email)
+    month = request.args.get("month")
+    year = request.args.get("year")
+
+
+
+    # get events belonging to user for specific month and year
     user = User.query.filter_by(email=email).first()
-
-    # get events filter by user id
+    user_id = user.id
+   
+    events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user_id).all()
+    
+    # convert events to dict
     all_events = []
-    events = Event.query.filter_by(user_id=user.id).all()
-
     for event in events: 
         all_events.append(event.to_dict())
-
     print("all events: ", all_events)
-    return ' '
+    return json.dumps(all_events)
+
+
+  
+
+    # 2. if date given in request
+
+    # return ' '

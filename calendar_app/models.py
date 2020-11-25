@@ -51,13 +51,14 @@ class Event(db.Model):
         return f"Post('{self.title}', '{self.description}', '{self.date}', '{self.start}', '{self.end}')"
 
     def to_dict(self):
-
+        print("Date ==========")
+        print(type(self.start))
         d = {'title' : self.title,
         'description' : self.description, 
-        'date': self.date, 
-        'start':self.start, 
-        'end':self.end}
-
+        'date': self.date.strftime("%d-%m-%Y"),  
+        'start':self.start.strftime("%H:%M"),
+        'end':self.end.strftime("%H:%M"),
+        }
         return d
 
 
