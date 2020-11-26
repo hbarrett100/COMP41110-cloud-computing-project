@@ -61,13 +61,10 @@ def create_event():
 @app.route("/get_events", methods=['GET', 'POST'])
 def get_events():
     # 1. if no date given in request
-
     # get email, month and year out of request
     email = request.args.get("email")
     month = request.args.get("month")
     year = request.args.get("year")
-
-
 
     # get events belonging to user for specific month and year
     user = User.query.filter_by(email=email).first()

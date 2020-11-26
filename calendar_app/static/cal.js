@@ -4,12 +4,7 @@ var requestsController = (function () {
 
         populateCalendarWithEvents: function (month, year) {
             // send get request for all events in current month and year
-            $.get("/get_events", {email: email, month:month+1, year:year})
-                .done(function (data) {
-                    console.log("eventssss")
-                    console.log(data)
-                //     return data;
-                });
+            return $.getJSON("/get_events", { email: email, month: month + 1, year: year })
         },
         // new event
         createEvent: function (values) {
@@ -17,8 +12,6 @@ var requestsController = (function () {
             console.log("inside create event fn");
             return $.post("/create_event", values);
         }
-
-
     }
 })();
 
@@ -35,7 +28,7 @@ var UIController = (function () {
         displayedMonthOffset: 0,
 
         // get current month and year
-        getCurrentMonthYear: function() {
+        getCurrentMonthYear: function () {
             return {
                 month: currentMonth,
                 year: currentYear
@@ -157,6 +150,16 @@ var UIController = (function () {
                 title: title,
                 description: description
             }
+        },
+
+        // mark dates in calendar which have an event
+        markDatesWithEvent: function(events) {
+            // console.log(events)
+
+           events.forEach(event => {
+               console.log("DATE: ", event.date.split("-")[0])
+           })
+
         }
     }
 })();
@@ -164,7 +167,7 @@ var UIController = (function () {
 var controller = (function (rqsCtrl, UICtrl) {
 
     var setupEventListeners = function () {
-        
+
         // next-month button
         $("#next").click(function () {
             UICtrl.displayedMonthOffset++;
@@ -226,9 +229,9 @@ var controller = (function (rqsCtrl, UICtrl) {
                 UICtrl.populateCalendarTable();
                 // get current month and year
                 monthAndYear = UICtrl.getCurrentMonthYear();
-                eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year'])
-                console.log("events");
-                console.log(eventsInMonth);
+                eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) { 
+                    UICtrl.markDatesWithEvent(data);
+                })
             });
 
         }
