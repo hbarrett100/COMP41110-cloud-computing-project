@@ -85,3 +85,7 @@ td {
     border-radius: 50%;
     display: inline-block;
     }
+
+#share-result {
+    display:none;
+}

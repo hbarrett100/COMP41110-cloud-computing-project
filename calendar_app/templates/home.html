@@ -18,7 +18,8 @@
   <div class="row">
     <div class="col-3">
        <!-- share event-->
-
+       <input class="form-control" type="text" placeholder="Search event" aria-label="Search" id="search-input">
+       <button type="button" class="btn btn-light" id="search">Search</button>
         <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
           Share calendar
         </button>
@@ -27,6 +28,7 @@
         <div class="card card-body">
           <input type="email" class="form-control" id="share_email" aria-describedby="emailHelp" placeholder="Enter email">
           <button class="btn btn-light" id="share">Share</button>
+          <small id="share-result" class="form-text text-muted"></small>
         </div>
       </div>
 

@@ -148,8 +148,26 @@ def share_calendar():
         current_user.shared_with.append(share_user)
         db.session.commit()
         return '', 200
-        # event_to_delete = Event.query.filter_by(id=event_id).first()
-        # db.session.delete(event_to_delete)
-        # db.session.commit()
 
-   
+
+# search for event
+@app.route("/search_event", methods=['GET', 'POST'])
+def search_event():
+    email = request.args.get("email")
+    search = request.args.get("search")
+    user = User.query.filter_by(email=email).first()
+
+    all_search_results = []
+    # get all events matching search which belong to current user
+    search_results = Event.query.filter(Event.title.contains(search)).filter_by(user_id = user.id).all()
+    for result in search_results:
+        all_search_results.append(result.to_dict())
+    
+    # get all events matching search which were shared by other users
+    users_with_shared_events = User.query.filter(User.shared_with.contains(user)).all()
+    for user in users_with_shared_events:
+        search_results = Event.query.filter(Event.title.contains(search)).filter_by(user_id = user.id).all()
+        for result in search_results:
+            all_search_results.append(result.to_dict())
+    
+    return json.dumps(all_search_results)

@@ -30,6 +30,11 @@ var requestsController = (function () {
         //share calendar
         shareCalendar: function (shareEmail) {
             return $.post("/share_calendar", { email: email, share_email: shareEmail });
+        },
+
+        //search for event
+        searchEvent: function (search) {
+            return $.getJSON("/search_event", {email: email, search: search});
         }
     }
 })();
@@ -119,29 +124,37 @@ var UIController = (function () {
         },
 
         // populate event div with details of events
-        populateEventCard: function (date, data) {
+        populateEventCard: function (date, data, search=false) {
 
             $("#events-list").html(' ');
 
+            // display message if no search results
+            if (data.length == 0){
+                $("#events-list").html('No events match your search.');
+            }
+            if (search) {
+                $('#card-title').html('Search Results')
+            }
+            
             data.forEach(event => {
-                html = `<li class="list-group-item">
-                <h3 class="title">${event.title}</h3>
-                <button type="button" class="edit btn btn-light" data-toggle="modal" data-target="#create-event" data-event-id=${event.id}>edit</button>
-                <button type="button" class="delete btn btn-light" data-event-id=${event.id}>delete</button>
-                <p class="times">${event.start}-${event.end}</p>
-                <p class="description">${event.description}</p>
-                </li>`;
+                let html = `<li class="list-group-item">
+                    <h3 class="title">${event.title}</h3>`;
+                html += search ? `<p>${event.date}</p>` : '';
+                html += `<button type="button" class="edit btn btn-light" data-toggle="modal" data-target="#create-event" data-event-id=${event.id}>edit</button>
+                    <button type="button" class="delete btn btn-light" data-event-id=${event.id}>delete</button>
+                    <p class="times">${event.start}-${event.end}</p>
+                    <p class="description">${event.description}</p>
+                    </li>`;
 
                 $("#events-list").append(html)
             });
 
             var monthYear = $('#month-name').text();
             if (date) {
-                // let date = $(thisElem).text();
-                // console.log(date);
                 $('#card-title').html("<span id='date'>" + date + "</span>" + " " + monthYear);
 
             }
+
         },
 
         // modal to create new event
@@ -226,7 +239,7 @@ var UIController = (function () {
             })
         },
 
-
+        // STILL TO DO!!!!
         displaySharingResult: function(result) {
             if (!result){
                 console.log("error")
@@ -382,11 +395,21 @@ var controller = (function (rqsCtrl, UICtrl) {
 
         // share calendar
         $("#share").click(function () {
+            $('#share_email').val('');
             let shareEmail = $('#share_email').val(); // get value out of input box
             rqsCtrl.shareCalendar(shareEmail).done(function () {
                 UICtrl.displaySharingResult(true);
             }).fail(function(){
                 UICtrl.displaySharingResult(false);
+            });
+        });
+
+         // search for event
+         $("#search").click(function () {
+      
+            let search = $('#search-input').val(); // get value out of input box
+            rqsCtrl.searchEvent(search).done(function (data) {
+                UICtrl.populateEventCard(false, data, search=true);
             });
         });
     };
