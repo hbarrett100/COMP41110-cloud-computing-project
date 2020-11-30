@@ -53,7 +53,8 @@ class Event(db.Model):
     def to_dict(self):
         print("Date ==========")
         print(type(self.start))
-        d = {'title' : self.title,
+        d = {'id' : self.id,
+        'title' : self.title,
         'description' : self.description, 
         'date': self.date.strftime("%d-%m-%Y"),  
         'start':self.start.strftime("%H:%M"),

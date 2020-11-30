@@ -62,7 +62,9 @@ def create_event():
 def get_events():
     # 1. if no date given in request
     # get email, month and year out of request
+    
     email = request.args.get("email")
+    date = request.args.get("date")
     month = request.args.get("month")
     year = request.args.get("year")
 
@@ -70,18 +72,31 @@ def get_events():
     user = User.query.filter_by(email=email).first()
     user_id = user.id
    
-    events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user_id).all()
     
-    # convert events to dict
-    all_events = []
-    for event in events: 
-        all_events.append(event.to_dict())
-    print("all events: ", all_events)
-    return json.dumps(all_events)
+    if not date:
+        events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user_id).all()
+        # convert events to dict
+        all_events = []
+        for event in events: 
+            all_events.append(event.to_dict())
+        print("all events: ", all_events)
+        return json.dumps(all_events)
+    else:
+        events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter(extract('day', Event.date) == date).filter_by(user_id = user_id).all()
+        all_events = []
+        for event in events: 
+            all_events.append(event.to_dict())
+        print("with date ", all_events)
+        return json.dumps(all_events)
 
+# get users events from database to populate calendar
+@app.route("/delete", methods=['GET', 'POST'])
+def delete():
+    if request.method == 'POST':
+        event_id = request.form.get("id")
+        print("ID ", event_id)
+        event_to_delete = Event.query.filter_by(id=event_id).first()
+        db.session.delete(event_to_delete)
+        db.session.commit()
 
-  
-
-    # 2. if date given in request
-
-    # return ' '
+        return ''

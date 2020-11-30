@@ -11,6 +11,15 @@ var requestsController = (function () {
             // pass values from form to route in post request
             console.log("inside create event fn");
             return $.post("/create_event", values);
+        },
+        getEventOnDate: function (date, month, year) {
+            return $.getJSON("/get_events", { email: email, date: date, month: month + 1, year: year })
+        },
+
+        // delete event from database
+        deleteEvent: function (id) {
+            console.log("inside deletre")
+            return $.post("/delete", {id: id});
         }
     }
 })();
@@ -29,9 +38,12 @@ var UIController = (function () {
 
         // get current month and year
         getCurrentMonthYear: function () {
+            var newD = new Date(currentYear, currentMonth + this.displayedMonthOffset, 1);
+            var dispmonth = newD.getMonth();
+            var dispyear = newD.getFullYear();
             return {
-                month: currentMonth,
-                year: currentYear
+                month: dispmonth,
+                year: dispyear
             }
         },
 
@@ -81,7 +93,7 @@ var UIController = (function () {
                     } else if (counter > daysInMonth) {
                         $('#cal-table').find('tbody tr').eq(-1).append("<td> " + " " + "</td>")
                     } else {
-                        $('#cal-table').find('tbody tr').eq(-1).append("<td class='table-cell' > " + counter++ + "</td>")
+                        $('#cal-table').find('tbody tr').eq(-1).append("<td class='table-cell'> " + counter++ + "</td>")
                     }
                 }
             }
@@ -89,14 +101,35 @@ var UIController = (function () {
             $('.table-cell').attr("data-toggle", 'modal');
             $('.table-cell').attr('data-target', 'event-modal');
 
+            return {
+                month: month,
+                year: year
+            }
 
         },
 
         // populate event div with details of events
-        populateEventCard: function (thisElem) {
-            // set date selected as title of div
+        populateEventCard: function (thisElem, data) {
+
+            $("#events-list").html(' ');
+
+
+            data.forEach(event => {
+                html = `<li class="list-group-item">
+                <h3>${event.title}</h3>
+                <button type="button" class="btn btn-light" data-event-id=${event.id}>edit</button>
+                <button type="button" class="delete btn btn-light" data-event-id=${event.id}>delete</button>
+                <p>${event.start}-${event.end}</p>
+                <p>${event.description}</p>
+                </li>`;
+
+                $("#events-list").append(html)
+            });
+
             var monthYear = $('#month-name').text();
-            $('#card-title').html(thisElem.innerHTML + " " + monthYear);
+            let date = $(thisElem).text();
+            console.log(date);
+            $('#card-title').html("<span id='date'>"+date+"</span>" + " " + monthYear);
 
         },
 
@@ -153,13 +186,27 @@ var UIController = (function () {
         },
 
         // mark dates in calendar which have an event
-        markDatesWithEvent: function(events) {
-            // console.log(events)
+        markDatesWithEvent: function (events) {
+            $( ".dot" ).remove();
+            console.log(events)
+            // find table cell with number of date
+            // then add a span with circle in
+            var dates = [];
+            events.forEach(event => {
+                dates.push(event.date.split("-")[0].trim())
+            });
+            console.log(dates);
+            $("#cal-table tr").each(function () {
 
-           events.forEach(event => {
-               console.log("DATE: ", event.date.split("-")[0])
-           })
+                $('td', this).each(function () {
+                    var $cell = $(this);
+                    var d = $cell.text().toString().trim();
 
+                    if (dates.includes(d)) {
+                        $cell.append('<span class="dot"></span>');
+                    }
+                })
+            })
         }
     }
 })();
@@ -171,20 +218,31 @@ var controller = (function (rqsCtrl, UICtrl) {
         // next-month button
         $("#next").click(function () {
             UICtrl.displayedMonthOffset++;
-            UICtrl.populateCalendarTable();
+            monthAndYear = UICtrl.populateCalendarTable();
+            eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                UICtrl.markDatesWithEvent(data);
+            });
+
         });
 
         // previous month 
         $("#prev").click(function () {
             UICtrl.displayedMonthOffset--;
-            UICtrl.populateCalendarTable();
+            monthAndYear = UICtrl.populateCalendarTable();
+            eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                UICtrl.markDatesWithEvent(data);
+            });
         });
 
         // all table cells
         $('#cal-table').on('click', '.table-cell', function (event) {
             let thisElem = event.target
-            UICtrl.populateEventCard(thisElem)
+            date = $(thisElem).text().trim();
+            monthAndYear = UICtrl.getCurrentMonthYear();
 
+            eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                UICtrl.populateEventCard(thisElem, data);
+            });
         });
 
         // create event
@@ -217,7 +275,26 @@ var controller = (function (rqsCtrl, UICtrl) {
             }
         });
 
+        $('#events-list').on('click', '.delete', function (event) {
+            let thisElem = event.target
+            let id = $(thisElem).attr("data-event-id")
+            rqsCtrl.deleteEvent(id).done(function() {
+                monthAndYear = UICtrl.getCurrentMonthYear();
+                // update events on calendar
+                eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                    UICtrl.markDatesWithEvent(data);
+                })
+                // update events on event card
+                let date = $('#date').text();
+                eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                    UICtrl.populateEventCard(thisElem, data);
+                });
 
+            }
+
+            );
+
+        });
     };
 
 
@@ -229,7 +306,7 @@ var controller = (function (rqsCtrl, UICtrl) {
                 UICtrl.populateCalendarTable();
                 // get current month and year
                 monthAndYear = UICtrl.getCurrentMonthYear();
-                eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) { 
+                eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
                     UICtrl.markDatesWithEvent(data);
                 })
             });
@@ -260,3 +337,5 @@ $(function () {
         }
     });
 });
+
+

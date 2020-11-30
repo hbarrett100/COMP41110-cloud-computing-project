@@ -17,14 +17,12 @@
         <div class="card-header" id="card-title">
           Events
         </div>
-        <div class="card-body">
+        <div class="card-body" id="event-card">
 
-          Click a date to view events.
-          <!-- <ul class="list-group list-group-flush">
-            <li class="list-group-item">Event1</li>
-            <li class="list-group-item">Event2</li>
-            <li class="list-group-item">Event3</li>
-          </ul> -->
+          <ul class="list-group list-group-flush" id='events-list'>
+            Click a date to view events.
+
+          </ul>
         </div>
       </div>
     </div>
@@ -52,7 +50,7 @@
 
 
 <!-- modal to create event -->
-<div class="modal fade" id="create-event" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="create-event" data-event-id='' role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
