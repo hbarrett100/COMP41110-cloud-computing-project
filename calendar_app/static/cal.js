@@ -102,11 +102,11 @@ var UIController = (function () {
                 $('#cal-table').find('tbody').append("<tr></tr>");
                 for (var j = 0; j < 7; j++) {
                     if (dayOffset > 0) {
-                        $('#cal-table').find('tbody tr').eq(-1).append("<td> " + " " + "</td>")
+                        $('#cal-table').find('tbody tr').eq(-1).append("<td class='empty'> " + " " + "</td>")
                         dayOffset--;
                         console.log("inside loop offset: " + dayOffset);
                     } else if (counter > daysInMonth) {
-                        $('#cal-table').find('tbody tr').eq(-1).append("<td> " + " " + "</td>")
+                        $('#cal-table').find('tbody tr').eq(-1).append("<td class='empty'> " + " " + "</td>")
                     } else {
                         $('#cal-table').find('tbody tr').eq(-1).append("<td class='table-cell'> " + counter++ + "</td>")
                     }
@@ -125,11 +125,15 @@ var UIController = (function () {
 
         // populate event div with details of events
         populateEventCard: function (date, data, search=false) {
-
-            $("#events-list").html(' ');
+            console.log(date);
+            console.log("inside event card")
+            $("#events-list").html('');
+        
 
             // display message if no search results
-            if (data.length == 0){
+            if (!search && data.length == 0){
+                $("#events-list").html('No events on this date.');
+            } else if (data.length == 0){
                 $("#events-list").html('No events match your search.');
             }
             if (search) {
@@ -360,7 +364,7 @@ var controller = (function (rqsCtrl, UICtrl) {
                 // update events on event card
                 let date = $('#date').text();
                 eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
-                    UICtrl.populateEventCard(false, data);
+                    UICtrl.populateEventCard(date, data);
                 });
             }
             );

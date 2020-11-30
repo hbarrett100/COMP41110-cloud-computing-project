@@ -112,7 +112,7 @@ def get_events():
 
         # add events belonging to users who have shared their events with current user
         for user in users_with_shared_events:
-            events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user.id).all()
+            events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter(extract('day', Event.date) == date).filter_by(user_id = user.id).all()
             for event in events: 
                 all_events.append(event.to_dict())
 

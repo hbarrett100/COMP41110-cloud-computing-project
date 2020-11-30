@@ -79,13 +79,19 @@ td {
 
 
 .dot {
-    height: 25px;
-    width: 25px;
-    background-color: #bbb;
+    height: 20px;
+    width: 20px;
+    background-color: #DDAF94;
     border-radius: 50%;
     display: inline-block;
+    margin-left: 5px;
+    margin-top: 5px;
     }
 
 #share-result {
     display:none;
+}
+
+.empty{
+    background-color: #E8E8E8;
 }
