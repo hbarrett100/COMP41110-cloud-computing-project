@@ -19,7 +19,12 @@ var requestsController = (function () {
         // delete event from database
         deleteEvent: function (id) {
             console.log("inside deletre")
-            return $.post("/delete", {id: id});
+            return $.post("/delete", { id: id });
+        },
+
+        // edit event 
+        editEvent: function (values) {
+            return $.post("/create_event", values);
         }
     }
 })();
@@ -109,28 +114,29 @@ var UIController = (function () {
         },
 
         // populate event div with details of events
-        populateEventCard: function (thisElem, data) {
+        populateEventCard: function (date, data) {
 
             $("#events-list").html(' ');
 
-
             data.forEach(event => {
                 html = `<li class="list-group-item">
-                <h3>${event.title}</h3>
-                <button type="button" class="btn btn-light" data-event-id=${event.id}>edit</button>
+                <h3 class="title">${event.title}</h3>
+                <button type="button" class="edit btn btn-light" data-toggle="modal" data-target="#create-event" data-event-id=${event.id}>edit</button>
                 <button type="button" class="delete btn btn-light" data-event-id=${event.id}>delete</button>
-                <p>${event.start}-${event.end}</p>
-                <p>${event.description}</p>
+                <p class="times">${event.start}-${event.end}</p>
+                <p class="description">${event.description}</p>
                 </li>`;
 
                 $("#events-list").append(html)
             });
 
             var monthYear = $('#month-name').text();
-            let date = $(thisElem).text();
-            console.log(date);
-            $('#card-title').html("<span id='date'>"+date+"</span>" + " " + monthYear);
+            if (date) {
+                // let date = $(thisElem).text();
+                // console.log(date);
+                $('#card-title').html("<span id='date'>" + date + "</span>" + " " + monthYear);
 
+            }   
         },
 
         // modal to create new event
@@ -187,13 +193,19 @@ var UIController = (function () {
 
         // mark dates in calendar which have an event
         markDatesWithEvent: function (events) {
-            $( ".dot" ).remove();
+            $(".dot").remove();
             console.log(events)
             // find table cell with number of date
             // then add a span with circle in
             var dates = [];
             events.forEach(event => {
-                dates.push(event.date.split("-")[0].trim())
+                event_date = event.date.split("-")[0].trim()
+                // if number less than 10 remove zero at start
+                if (event_date.charAt(0) == "0") {
+                    console.log("zero")
+                    event_date = event_date.slice(1, 2);
+                }
+                dates.push(event_date)
             });
             console.log(dates);
             $("#cal-table tr").each(function () {
@@ -241,13 +253,14 @@ var controller = (function (rqsCtrl, UICtrl) {
             monthAndYear = UICtrl.getCurrentMonthYear();
 
             eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
-                UICtrl.populateEventCard(thisElem, data);
+                UICtrl.populateEventCard(date, data);
             });
         });
 
         // create event
         $("#create").click(function () {
             console.log("Create");
+            $('#create-event').attr("data-event-id", '')
             UICtrl.newEventModal();
 
         });
@@ -261,7 +274,7 @@ var controller = (function (rqsCtrl, UICtrl) {
         })
 
         // save new event button 
-        $("#save-event").click(function () {
+        $("#save-event").click(function (event) {
             // show error if title not given by user
             if ($('#title').val() == '') {
                 $('#title-error').show();
@@ -270,15 +283,49 @@ var controller = (function (rqsCtrl, UICtrl) {
             } else {
                 $('#title-error').hide();
                 $("#create-event").modal('hide');
-                var formValues = UICtrl.getDataFromEventForm();
-                rqsCtrl.createEvent(formValues);
+                // if data attr is empty, call create event route
+                // else call edit event route
+                if ($('#create-event').attr("data-event-id") === "") {
+                    var formValues = UICtrl.getDataFromEventForm();
+                    rqsCtrl.createEvent(formValues).done(function () {
+                        monthAndYear = UICtrl.getCurrentMonthYear();
+                        // update events on calendar
+                        eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                            UICtrl.markDatesWithEvent(data);
+                        });
+                        // update events on event card
+                        let date = $('#date').text();
+                        eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                            UICtrl.populateEventCard(date, data);
+                        });
+
+                    });;
+                } else {
+                    var formValues = UICtrl.getDataFromEventForm();
+                    let eventId = $('#create-event').attr("data-event-id");
+                    formValues['eventId'] = eventId; //add event id to object
+                    rqsCtrl.editEvent(formValues).done(function () {
+                        monthAndYear = UICtrl.getCurrentMonthYear();
+                        // update events on calendar
+                        eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                            UICtrl.markDatesWithEvent(data);
+                        });
+                        // update events on event card
+                        let date = $('#date').text();
+                        eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
+                            UICtrl.populateEventCard(date, data);
+                        });
+
+                    });
+
+                }
             }
         });
 
         $('#events-list').on('click', '.delete', function (event) {
             let thisElem = event.target
             let id = $(thisElem).attr("data-event-id")
-            rqsCtrl.deleteEvent(id).done(function() {
+            rqsCtrl.deleteEvent(id).done(function () {
                 monthAndYear = UICtrl.getCurrentMonthYear();
                 // update events on calendar
                 eventsInMonth = rqsCtrl.populateCalendarWithEvents(monthAndYear['month'], monthAndYear['year']).done(function (data) {
@@ -287,13 +334,36 @@ var controller = (function (rqsCtrl, UICtrl) {
                 // update events on event card
                 let date = $('#date').text();
                 eventsOnDate = rqsCtrl.getEventOnDate(date, monthAndYear['month'], monthAndYear['year']).done(function (data) {
-                    UICtrl.populateEventCard(thisElem, data);
+                    UICtrl.populateEventCard(false, data);
                 });
-
             }
-
             );
+        });
 
+        $('#events-list').on('click', '.edit', function (event) {
+            let thisElem = event.target
+            let id = $(thisElem).attr("data-event-id")
+            console.log("IDDDDD: " + id)
+            $('#create-event').attr("data-event-id", id);
+            let par = $(thisElem).parent();
+            let title = par.find(".title").text();
+            let start = par.find(".times").text().split("-")[0];
+            let end = par.find(".times").text().split("-")[1];
+            let description = par.find(".description").text();
+
+            // populate modal with above deets
+            UICtrl.newEventModal();
+            $('#start-timepicker').val(start);
+            $('#end-timepicker').val(end);
+            $('#title').val(title);
+            $('#description').val(description);
+
+            //date
+            date = $('#date').text().trim();
+            monthAndYear = UICtrl.getCurrentMonthYear();
+            month = monthAndYear['month'] + 1;
+            year = monthAndYear['year'];
+            $('#datepicker').val(date + '-' + month + '-' + year);
         });
     };
 

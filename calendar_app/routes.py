@@ -27,11 +27,9 @@ def login():
 # create new event
 @app.route("/create_event", methods=['GET', 'POST'])
 def create_event():
-    print("inside create_event route")
     if request.method == 'POST':
         date = request.form.get("date")
         datetime_obj = datetime.strptime(date, '%d-%m-%Y').strftime('%Y-%m-%d')
-        print("date: ", datetime_obj)
 
         start = request.form.get("startTime")
         start = start + ":00"
@@ -42,18 +40,30 @@ def create_event():
         event_title = request.form.get("title")
         event_description = request.form.get("description")
 
-
         # get id of event creator
         email = request.form.get("email")
         user = User.query.filter_by(email=email).first()
         user_id = user.id
-        
-        
-        new_event = Event(title=event_title, description=event_description, date=datetime_obj, start=start, end=end, user_id=user_id)
-        db.session.add(new_event)
-        db.session.commit()
 
-        
+        event_id = request.form.get("eventId")
+        print(event_id)
+        if not event_id:
+            print("in the add section")
+            new_event = Event(title=event_title, description=event_description, date=datetime_obj, start=start, end=end, user_id=user_id)
+            db.session.add(new_event)
+            db.session.commit()
+        else: 
+            print("in the edit section")
+            event_id = request.form.get("eventId")
+            event_to_edit = Event.query.filter_by(id=event_id).first()
+            print("testing edit")
+            print(event_to_edit)
+            event_to_edit.title = event_title
+            event_to_edit.description = event_description
+            event_to_edit.date = datetime_obj
+            event_to_edit.start = start
+            event_to_edit.end = end
+            db.session.commit()
     return '' 
 
 
