@@ -4,6 +4,10 @@
   <div class="row">
     <div class="col-12">
       <h1 id="month-name"></h1>
+
+     
+
+      
       <button type="button" class="btn btn-light" id="prev" class="move-month"><<</button>
       <button type="button" class="btn btn-light" id="next" class="move-month">>></button>
       
@@ -13,6 +17,23 @@
   </div>
   <div class="row">
     <div class="col-3">
+       <!-- share event-->
+
+        <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          Share calendar
+        </button>
+      </p>
+      <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+          <input type="email" class="form-control" id="share_email" aria-describedby="emailHelp" placeholder="Enter email">
+          <button class="btn btn-light" id="share">Share</button>
+        </div>
+      </div>
+
+
+
+
+      <!-- events card -->
       <div class="card">
         <div class="card-header" id="card-title">
           Events
@@ -27,6 +48,7 @@
       </div>
     </div>
     <div class="col-9">
+      <!-- calendar table -->
       <div id="table-div">
         <table class="table table-bordered" id="cal-table">
           <thead>
@@ -54,7 +76,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Create New Event</h5>
+        <h5 class="modal-title" id="modal-heading">Create New Event</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

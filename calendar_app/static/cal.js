@@ -25,6 +25,11 @@ var requestsController = (function () {
         // edit event 
         editEvent: function (values) {
             return $.post("/create_event", values);
+        },
+
+        //share calendar
+        shareCalendar: function (shareEmail) {
+            return $.post("/share_calendar", { email: email, share_email: shareEmail });
         }
     }
 })();
@@ -136,7 +141,7 @@ var UIController = (function () {
                 // console.log(date);
                 $('#card-title').html("<span id='date'>" + date + "</span>" + " " + monthYear);
 
-            }   
+            }
         },
 
         // modal to create new event
@@ -219,6 +224,13 @@ var UIController = (function () {
                     }
                 })
             })
+        },
+
+
+        displaySharingResult: function(result) {
+            if (!result){
+                console.log("error")
+            }
         }
     }
 })();
@@ -260,6 +272,7 @@ var controller = (function (rqsCtrl, UICtrl) {
         // create event
         $("#create").click(function () {
             console.log("Create");
+            $('#modal-heading').html('Create New Event');
             $('#create-event').attr("data-event-id", '')
             UICtrl.newEventModal();
 
@@ -341,6 +354,7 @@ var controller = (function (rqsCtrl, UICtrl) {
         });
 
         $('#events-list').on('click', '.edit', function (event) {
+            $('#modal-heading').html('Edit Event');
             let thisElem = event.target
             let id = $(thisElem).attr("data-event-id")
             console.log("IDDDDD: " + id)
@@ -364,6 +378,16 @@ var controller = (function (rqsCtrl, UICtrl) {
             month = monthAndYear['month'] + 1;
             year = monthAndYear['year'];
             $('#datepicker').val(date + '-' + month + '-' + year);
+        });
+
+        // share calendar
+        $("#share").click(function () {
+            let shareEmail = $('#share_email').val(); // get value out of input box
+            rqsCtrl.shareCalendar(shareEmail).done(function () {
+                UICtrl.displaySharingResult(true);
+            }).fail(function(){
+                UICtrl.displaySharingResult(false);
+            });
         });
     };
 

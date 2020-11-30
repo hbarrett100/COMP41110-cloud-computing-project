@@ -81,23 +81,44 @@ def get_events():
     # get events belonging to user for specific month and year
     user = User.query.filter_by(email=email).first()
     user_id = user.id
-   
-    
+    # get array of all users who have shared events with current user 
+    users_with_shared_events = User.query.filter(User.shared_with.contains(user)).all()
+
+
+    # if date not given as argument
     if not date:
         events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user_id).all()
         # convert events to dict
         all_events = []
         for event in events: 
             all_events.append(event.to_dict())
+
+        # add events belonging to users who have shared their events with current user
+        for user in users_with_shared_events:
+            events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user.id).all()
+            for event in events: 
+                all_events.append(event.to_dict())
+
         print("all events: ", all_events)
         return json.dumps(all_events)
+
+    # if date given as argument 
     else:
         events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter(extract('day', Event.date) == date).filter_by(user_id = user_id).all()
         all_events = []
         for event in events: 
             all_events.append(event.to_dict())
+
+
+        # add events belonging to users who have shared their events with current user
+        for user in users_with_shared_events:
+            events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user.id).all()
+            for event in events: 
+                all_events.append(event.to_dict())
+
         print("with date ", all_events)
         return json.dumps(all_events)
+
 
 # get users events from database to populate calendar
 @app.route("/delete", methods=['GET', 'POST'])
@@ -110,3 +131,25 @@ def delete():
         db.session.commit()
 
         return ''
+
+
+# share calendar with another user who has has an account on app
+@app.route("/share_calendar", methods=['GET', 'POST'])
+def share_calendar():
+    if request.method == 'POST':
+        user_email = request.form.get("email")
+        share_email = request.form.get("share_email")
+        print(user_email)
+        print(share_email)
+        share_user = User.query.filter_by(email=share_email).first()
+        if share_user is None: 
+            return '', 400
+        current_user = User.query.filter_by(email=user_email).first()
+        current_user.shared_with.append(share_user)
+        db.session.commit()
+        return '', 200
+        # event_to_delete = Event.query.filter_by(id=event_id).first()
+        # db.session.delete(event_to_delete)
+        # db.session.commit()
+
+   
