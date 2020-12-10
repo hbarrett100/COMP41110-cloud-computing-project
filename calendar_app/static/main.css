@@ -30,7 +30,6 @@ td {
     cursor: pointer;
 }
 
-
 .table-cell:hover {
     background-color: #E8E8E8;
 }
@@ -42,8 +41,6 @@ td {
  .modal.fade{
     opacity:1;
   }
-  /* .modal-content { background: #E0E0E0 !important; } */
-
 
   /* remove modal transition effect */
   .modal.fade .modal-dialog {
@@ -61,7 +58,6 @@ td {
       display: none;
   }
 
-
   #navbar-cal {
     background-color: #DDAF94;
   }
@@ -74,7 +70,7 @@ td {
     background-color:  #266150;
   }
 
-  .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-primary:focus, .btn-primary:active:focus {
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-primary:focus, .btn-primary:active:focus {
     background-color: #F4976C;}
 
 
@@ -93,5 +89,49 @@ td {
 }
 
 .empty{
-    background-color: #E8E8E8;
+    background-color: #F0F0F0;
+}
+
+/* login page landing text */
+.landing-text {
+    position: absolute;
+	text-align: center;
+	vertical-align: middle;
+	top: 30%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	opacity: 1;
+
+}
+
+#enter_email {
+    margin-bottom: 20px;
+}
+
+#login-title {
+    color: #808080;
+}
+
+#prev {
+    margin-left: 85px;
+}
+
+.btn {
+    background-color: #DCDCDC;
+}
+
+#cal-container {
+    margin-top: 50px;
+}
+
+#search-input {
+    margin-bottom: 5px;
+}
+
+.event-btn {
+    margin-bottom: 5px;
+}
+
+#event-card{
+    width: 400px;
 }

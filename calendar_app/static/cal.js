@@ -2,16 +2,20 @@ var requestsController = (function () {
 
     return {
 
+        // populate calendar with any existing events
         populateCalendarWithEvents: function (month, year) {
             // send get request for all events in current month and year
             return $.getJSON("/get_events", { email: email, month: month + 1, year: year })
         },
+
         // new event
         createEvent: function (values) {
             // pass values from form to route in post request
             console.log("inside create event fn");
             return $.post("/create_event", values);
         },
+
+        // get event details for specific date
         getEventOnDate: function (date, month, year) {
             return $.getJSON("/get_events", { email: email, date: date, month: month + 1, year: year })
         },
@@ -35,6 +39,10 @@ var requestsController = (function () {
         //search for event
         searchEvent: function (search) {
             return $.getJSON("/search_event", {email: email, search: search});
+        },
+
+        getUsers: function() {
+            // send get request for all user emails
         }
     }
 })();
@@ -97,7 +105,6 @@ var UIController = (function () {
             counter = 1;
             console.log("counter: " + counter);
 
-            // for (var i = 0; i < 6; i++) {
             while (counter <= daysInMonth) {
                 $('#cal-table').find('tbody').append("<tr></tr>");
                 for (var j = 0; j < 7; j++) {
@@ -123,13 +130,12 @@ var UIController = (function () {
 
         },
 
-        // populate event div with details of events
+        // populate event card with details of events
         populateEventCard: function (date, data, search=false) {
             console.log(date);
             console.log("inside event card")
             $("#events-list").html('');
         
-
             // display message if no search results
             if (!search && data.length == 0){
                 $("#events-list").html('No events on this date.');
@@ -180,6 +186,7 @@ var UIController = (function () {
             });
         },
 
+        // set all day event if checkbox checked
         setAllDayEvent: function () {
             $('#start-timepicker').val("");
             $('#end-timepicker').val("");
@@ -187,7 +194,7 @@ var UIController = (function () {
             $('#end-timepicker').prop("disabled", true);
 
         },
-
+        // unset all day event if checkbox unchecked
         unsetAllDayEvent: function () {
             console.log("inside unset")
             $('#start-timepicker').removeAttr("disabled");
@@ -213,23 +220,19 @@ var UIController = (function () {
             }
         },
 
-        // mark dates in calendar which have an event
+        // mark dates in calendar which have an event with dot
         markDatesWithEvent: function (events) {
             $(".dot").remove();
-            console.log(events)
             // find table cell with number of date
-            // then add a span with circle in
             var dates = [];
             events.forEach(event => {
                 event_date = event.date.split("-")[0].trim()
                 // if number less than 10 remove zero at start
                 if (event_date.charAt(0) == "0") {
-                    console.log("zero")
                     event_date = event_date.slice(1, 2);
                 }
                 dates.push(event_date)
             });
-            console.log(dates);
             $("#cal-table tr").each(function () {
 
                 $('td', this).each(function () {
@@ -252,6 +255,7 @@ var UIController = (function () {
     }
 })();
 
+// main controller which calls methods in requests controller and UI controller
 var controller = (function (rqsCtrl, UICtrl) {
 
     var setupEventListeners = function () {
@@ -374,7 +378,6 @@ var controller = (function (rqsCtrl, UICtrl) {
             $('#modal-heading').html('Edit Event');
             let thisElem = event.target
             let id = $(thisElem).attr("data-event-id")
-            console.log("IDDDDD: " + id)
             $('#create-event').attr("data-event-id", id);
             let par = $(thisElem).parent();
             let title = par.find(".title").text();
@@ -420,6 +423,7 @@ var controller = (function (rqsCtrl, UICtrl) {
 
 
     return {
+        // called when page loads
         init: function () {
 
             $(document).ready(function () {

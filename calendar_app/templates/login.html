@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container">
+<!-- login -->
+<div class="container" id="login">
     <div class="landing-text">
-        <h1>Cal Pal</h1>
+        <h3 id="login-title">Enter email to login</h3>
         <form name="login" action="/home">
             <label for="inputEmail"></label>
             <input type="email" name="email" id="enter_email" class="form-control" placeholder="Enter Email" required
