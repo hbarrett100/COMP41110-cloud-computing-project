@@ -129,6 +129,7 @@ td {
 
 #event-card{
     width: 400px;
+    overflow-y: scroll;
 }
 
 #create {
