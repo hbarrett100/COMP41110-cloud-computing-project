@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect, request
-from calendar_app import app, db
+from calendar_app import application, db
 from calendar_app.models import User, Event
 from datetime import datetime
 from sqlalchemy.orm import load_only
@@ -7,7 +7,7 @@ from sqlalchemy import extract
 import json
 
 # home page
-@app.route("/home")
+@application.route("/home")
 def home():
     user_email = request.args.get('email') #get email entered in form on login page
     # add user to database if they don't already exist 
@@ -19,13 +19,13 @@ def home():
     return render_template('home.html', user_email=user_email)
 
 # login page
-@app.route("/")
-@app.route("/login")
+@application.route("/")
+@application.route("/login")
 def login():
     return render_template('login.html')
 
 # create new event
-@app.route("/create_event", methods=['GET', 'POST'])
+@application.route("/create_event", methods=['GET', 'POST'])
 def create_event():
     if request.method == 'POST':
         date = request.form.get("date")
@@ -68,7 +68,7 @@ def create_event():
 
 
 # get users events from database to populate calendar
-@app.route("/get_events", methods=['GET', 'POST'])
+@application.route("/get_events", methods=['GET', 'POST'])
 def get_events():
     # 1. if no date given in request
     # get email, month and year out of request
@@ -102,7 +102,7 @@ def get_events():
         print("all events: ", all_events)
         return json.dumps(all_events)
 
-    # if date given as argument 
+    # 2. if date given as argument 
     else:
         events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter(extract('day', Event.date) == date).filter_by(user_id = user_id).all()
         all_events = []
@@ -121,7 +121,7 @@ def get_events():
 
 
 # get users events from database to populate calendar
-@app.route("/delete", methods=['GET', 'POST'])
+@application.route("/delete", methods=['GET', 'POST'])
 def delete():
     if request.method == 'POST':
         event_id = request.form.get("id")
@@ -134,7 +134,7 @@ def delete():
 
 
 # share calendar with another user who has has an account on app
-@app.route("/share_calendar", methods=['GET', 'POST'])
+@application.route("/share_calendar", methods=['GET', 'POST'])
 def share_calendar():
     if request.method == 'POST':
         user_email = request.form.get("email")
@@ -151,7 +151,7 @@ def share_calendar():
 
 
 # search for event
-@app.route("/search_event", methods=['GET', 'POST'])
+@application.route("/search_event", methods=['GET', 'POST'])
 def search_event():
     email = request.args.get("email")
     search = request.args.get("search")

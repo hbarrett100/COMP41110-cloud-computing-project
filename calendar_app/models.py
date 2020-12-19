@@ -62,6 +62,3 @@ class Event(db.Model):
         }
         return d
 
-
-# if __name__ == "__main__":
-    

@@ -6,38 +6,48 @@
 
       <!-- create event-->
       <div class="row">
-        <button type="button" class="btn event-btn btn-light" id="create" data-toggle="modal"
+        <button type="button" class="btn event-btn white" id="create" data-toggle="modal"
           data-target="#create-event">Create
           Event</button>
       </div>
 
       <!-- search event -->
-      <div class="row">
-        <input class="form-control" type="text" placeholder="Search event" aria-label="Search" id="search-input">
-        <button type="button" class="btn event-btn btn-light" id="search">Search</button>
-
-      </div>
-
-      <!-- share calendar -->
-      <div class="row">
-        <button class="btn event-btn btn-light" type="button" data-toggle="collapse" data-target="#collapseExample"
-          aria-expanded="false" aria-controls="collapseExample">
-          Share calendar
-        </button>
-        <div class="collapse" id="collapseExample">
-          <div class="card card-body">
-            <input type="email" class="form-control" id="share_email" aria-describedby="emailHelp"
-              placeholder="Enter email">
-            <button class="btn btn-light" id="share">Share</button>
-            <small id="share-result" class="form-text text-muted"></small>
-          </div>
+      <div class="row input-group mb-3">
+        <input class="form-control" type="text" placeholder="Search event" aria-label="Search" id="search-input"
+          aria-describedby="search">
+        <div class="input-group-append">
+          <span class="input-group-text" id="search">Search</span>
         </div>
       </div>
 
+
+      <!-- share calendar -->
+      <label for="share">Share calendar with other users:</label>
+      <div class="row input-group mb-3">
+
+        <input class="form-control" type="text" placeholder="Enter email" aria-label="share" id="share_email"
+          aria-describedby="search">
+        <div class="input-group-append">
+          <span class="input-group-text" id="share">Share</span>
+        </div>
+      </div>
+
+      <!-- share calendar alerts -->
+      <div class="alert alert-success share-alert" id="share-success" role="alert">
+        Calendar shared!
+      </div>
+      <div class="alert alert-danger share-alert" id="share-error" role="alert">
+        User does not exist.
+      </div>
+
+
+
+
+
+      <!-- events card -->
       <div class="row">
-        <!-- events card -->
-        <div class="card" id="event-card">
-          <div class="card-header" id="card-title">
+        <div class="card overflow-auto" id="event-card">
+          <div class="card-header white" id="card-title">
             Events
           </div>
           <div class="card-body" id="event-card">
@@ -53,7 +63,8 @@
       <!-- calendar table -->
       <div class="row">
         <div class="col-3">
-          <button type="button" class="btn btn-light" id="prev" class="move-month"><<</button>
+          <button type="button" class="btn btn-light" id="prev" class="move-month">
+            <<< /button>
               <button type="button" class="btn btn-light" id="next" class="move-month">>></button>
         </div>
         <div class="col-6">
@@ -64,13 +75,13 @@
         <table class="table table-bordered" id="cal-table">
           <thead>
             <tr>
-              <th scope="col">Mon</th>
-              <th scope="col">Tue</th>
-              <th scope="col">Wed</th>
-              <th scope="col">Thu</th>
-              <th scope="col">Fri</th>
-              <th scope="col">Sat</th>
-              <th scope="col">Sun</th>
+              <th scope="col" class="white">Mon</th>
+              <th scope="col" class="white">Tue</th>
+              <th scope="col" class="white">Wed</th>
+              <th scope="col" class="white">Thu</th>
+              <th scope="col" class="white">Fri</th>
+              <th scope="col" class="white">Sat</th>
+              <th scope="col" class="white">Sun</th>
             </tr>
           </thead>
           <tbody>
@@ -133,7 +144,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel">Cancel</button>
         <button type="submit" class="btn btn-primary" id="save-event">Save</button>
       </div>
     </div>

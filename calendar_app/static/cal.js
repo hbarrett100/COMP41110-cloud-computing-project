@@ -1,3 +1,4 @@
+// requests controller manages any functions related to AJAX requests
 var requestsController = (function () {
 
     return {
@@ -38,15 +39,12 @@ var requestsController = (function () {
 
         //search for event
         searchEvent: function (search) {
-            return $.getJSON("/search_event", {email: email, search: search});
+            return $.getJSON("/search_event", { email: email, search: search });
         },
-
-        getUsers: function() {
-            // send get request for all user emails
-        }
     }
 })();
 
+// UI controller manages any functions related to the DOM
 var UIController = (function () {
 
     var d = new Date;
@@ -131,29 +129,27 @@ var UIController = (function () {
         },
 
         // populate event card with details of events
-        populateEventCard: function (date, data, search=false) {
-            console.log(date);
-            console.log("inside event card")
+        populateEventCard: function (date, data, search = false) {
             $("#events-list").html('');
-        
+
             // display message if no search results
-            if (!search && data.length == 0){
+            if (!search && data.length == 0) {
                 $("#events-list").html('No events on this date.');
-            } else if (data.length == 0){
+            } else if (data.length == 0) {
                 $("#events-list").html('No events match your search.');
             }
             if (search) {
                 $('#card-title').html('Search Results')
             }
-            
+
             data.forEach(event => {
                 let html = `<li class="list-group-item">
                     <h3 class="title">${event.title}</h3>`;
                 html += search ? `<p>${event.date}</p>` : '';
-                html += `<button type="button" class="edit btn btn-light" data-toggle="modal" data-target="#create-event" data-event-id=${event.id}>edit</button>
+                html += ` <p class="times">${event.start}-${event.end}</p>
+                <p class="description">${event.description}</p>
+                <button type="button" class="edit btn btn-light" data-toggle="modal" data-target="#create-event" data-event-id=${event.id}>edit</button>
                     <button type="button" class="delete btn btn-light" data-event-id=${event.id}>delete</button>
-                    <p class="times">${event.start}-${event.end}</p>
-                    <p class="description">${event.description}</p>
                     </li>`;
 
                 $("#events-list").append(html)
@@ -169,7 +165,7 @@ var UIController = (function () {
 
         // modal to create new event
         newEventModal: function () {
-            $('#title').html('');
+            $('#title').val("");
             // set up date and time pickers
             $("#datepicker").flatpickr({
                 dateFormat: 'd-m-yy',
@@ -246,10 +242,12 @@ var UIController = (function () {
             })
         },
 
-        // STILL TO DO!!!!
-        displaySharingResult: function(result) {
-            if (!result){
-                console.log("error")
+        // display result of calendar sharing
+        displaySharingResult: function (result) {
+            if (!result) {
+                $('#share-error').show();
+            } else {
+                $('#share-success').show();
             }
         }
     }
@@ -402,21 +400,21 @@ var controller = (function (rqsCtrl, UICtrl) {
 
         // share calendar
         $("#share").click(function () {
-            $('#share_email').val('');
             let shareEmail = $('#share_email').val(); // get value out of input box
+            $('#share_email').val('');
             rqsCtrl.shareCalendar(shareEmail).done(function () {
                 UICtrl.displaySharingResult(true);
-            }).fail(function(){
+            }).fail(function () {
                 UICtrl.displaySharingResult(false);
             });
         });
 
-         // search for event
-         $("#search").click(function () {
-      
+        // search for event
+        $("#search").click(function () {
+
             let search = $('#search-input').val(); // get value out of input box
             rqsCtrl.searchEvent(search).done(function (data) {
-                UICtrl.populateEventCard(false, data, search=true);
+                UICtrl.populateEventCard(false, data, search = true);
             });
         });
     };

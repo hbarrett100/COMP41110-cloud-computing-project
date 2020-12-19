@@ -1,7 +1,7 @@
 .table {
     border-radius: 5px;
-    width: 80%;
-    height: 80%;
+    width: 90%;
+    height: 90%;
     margin: 0px auto;
     float: none;
 }
@@ -15,7 +15,6 @@
     width: 80%;
     margin: 0px auto;
     float: none;
-    margin-top: 40px;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -124,14 +123,33 @@ td {
     margin-top: 50px;
 }
 
-#search-input {
-    margin-bottom: 5px;
-}
-
 .event-btn {
     margin-bottom: 5px;
 }
 
 #event-card{
     width: 400px;
+}
+
+#create {
+    background-color: #DDAF94;
+    font-weight: 500;
+}
+
+.white {
+    color: white;
+}
+
+#save-event {
+    background-color:  #266150;
+    border: 0px;
+}
+
+#cancel {
+    background-color: #DDAF94;
+    border: 0px;
+}
+
+.share-alert{
+    display:none;
 }
