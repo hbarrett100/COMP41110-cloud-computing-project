@@ -279,7 +279,12 @@ var controller = (function (rqsCtrl, UICtrl) {
 
         // all table cells
         $('#cal-table').on('click', '.table-cell', function (event) {
-            let thisElem = event.target
+            let thisElem = event.target;
+
+            if ($(thisElem).hasClass('dot')){
+                thisElem = (thisElem).parent()
+            }
+
             date = $(thisElem).text().trim();
             monthAndYear = UICtrl.getCurrentMonthYear();
 
