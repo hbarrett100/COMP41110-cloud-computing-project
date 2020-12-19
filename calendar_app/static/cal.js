@@ -282,8 +282,11 @@ var controller = (function (rqsCtrl, UICtrl) {
             let thisElem = event.target;
 
             if ($(thisElem).hasClass('dot')){
-                thisElem = (thisElem).parent()
+                thisElem = $(thisElem).parent()
             }
+
+            console.log("target")
+            console.log(thisElem);
 
             date = $(thisElem).text().trim();
             monthAndYear = UICtrl.getCurrentMonthYear();

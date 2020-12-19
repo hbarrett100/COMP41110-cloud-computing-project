@@ -129,6 +129,10 @@ td {
 
 #event-card{
     width: 400px;
+    max-height: 400px !important;
+}
+
+#event-card-body{
     overflow-y: scroll;
 }
 
