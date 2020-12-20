@@ -1,4 +1,4 @@
-// requests controller manages any functions related to AJAX requests
+// requests controller manages any functions related to HTTP requests
 var requestsController = (function () {
 
     return {
@@ -11,8 +11,6 @@ var requestsController = (function () {
 
         // new event
         createEvent: function (values) {
-            // pass values from form to route in post request
-            console.log("inside create event fn");
             return $.post("/create_event", values);
         },
 
@@ -23,7 +21,6 @@ var requestsController = (function () {
 
         // delete event from database
         deleteEvent: function (id) {
-            console.log("inside deletre")
             return $.post("/delete", { id: id });
         },
 
@@ -85,7 +82,6 @@ var UIController = (function () {
 
             // first day of month
             startDay = newD.getDay();
-            console.log("start day: " + startDay);
 
             // set sunday equal to 7
             if (startDay == 0) {
@@ -94,14 +90,9 @@ var UIController = (function () {
 
             // day offset for calendar display
             let dayOffset = startDay - 1;
-            console.log("offset: " + dayOffset);
             // number of days in month for calendar display
             let daysInMonth = new Date(year, month + 1, 0).getDate();
-            console.log("Days in month: " + daysInMonth);
-
-            // populate table with dates
             counter = 1;
-            console.log("counter: " + counter);
 
             while (counter <= daysInMonth) {
                 $('#cal-table').find('tbody').append("<tr></tr>");
@@ -109,7 +100,6 @@ var UIController = (function () {
                     if (dayOffset > 0) {
                         $('#cal-table').find('tbody tr').eq(-1).append("<td class='empty'> " + " " + "</td>")
                         dayOffset--;
-                        console.log("inside loop offset: " + dayOffset);
                     } else if (counter > daysInMonth) {
                         $('#cal-table').find('tbody tr').eq(-1).append("<td class='empty'> " + " " + "</td>")
                     } else {
@@ -192,7 +182,6 @@ var UIController = (function () {
         },
         // unset all day event if checkbox unchecked
         unsetAllDayEvent: function () {
-            console.log("inside unset")
             $('#start-timepicker').removeAttr("disabled");
             $('#end-timepicker').removeAttr("disabled");
         },
@@ -204,7 +193,6 @@ var UIController = (function () {
             var endTime = $('#end-timepicker').val();
             var title = $('#title').val();
             var description = $('#description').val();
-            console.log(date, startTime, endTime, title, description);
 
             return {
                 email: email,
@@ -285,9 +273,6 @@ var controller = (function (rqsCtrl, UICtrl) {
                 thisElem = $(thisElem).parent()
             }
 
-            console.log("target")
-            console.log(thisElem);
-
             date = $(thisElem).text().trim();
             monthAndYear = UICtrl.getCurrentMonthYear();
 
@@ -298,7 +283,6 @@ var controller = (function (rqsCtrl, UICtrl) {
 
         // create event
         $("#create").click(function () {
-            console.log("Create");
             $('#modal-heading').html('Create New Event');
             $('#create-event').attr("data-event-id", '')
             UICtrl.newEventModal();
@@ -447,7 +431,6 @@ var controller = (function (rqsCtrl, UICtrl) {
 
 })(requestsController, UIController);
 
-
 controller.init();
 
 // email validation on login page
@@ -464,7 +447,6 @@ $(function () {
         },
         submitHandler: function (form) {
             form.submit();
-            console.log("form submitted")
         }
     });
 });

@@ -46,18 +46,13 @@ def create_event():
         user_id = user.id
 
         event_id = request.form.get("eventId")
-        print(event_id)
         if not event_id:
-            print("in the add section")
             new_event = Event(title=event_title, description=event_description, date=datetime_obj, start=start, end=end, user_id=user_id)
             db.session.add(new_event)
             db.session.commit()
         else: 
-            print("in the edit section")
             event_id = request.form.get("eventId")
             event_to_edit = Event.query.filter_by(id=event_id).first()
-            print("testing edit")
-            print(event_to_edit)
             event_to_edit.title = event_title
             event_to_edit.description = event_description
             event_to_edit.date = datetime_obj
@@ -84,7 +79,6 @@ def get_events():
     # get array of all users who have shared events with current user 
     users_with_shared_events = User.query.filter(User.shared_with.contains(user)).all()
 
-
     # if date not given as argument
     if not date:
         events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user_id).all()
@@ -98,8 +92,6 @@ def get_events():
             events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter_by(user_id = user.id).all()
             for event in events: 
                 all_events.append(event.to_dict())
-
-        print("all events: ", all_events)
         return json.dumps(all_events)
 
     # 2. if date given as argument 
@@ -109,14 +101,11 @@ def get_events():
         for event in events: 
             all_events.append(event.to_dict())
 
-
         # add events belonging to users who have shared their events with current user
         for user in users_with_shared_events:
             events = Event.query.filter(extract('year', Event.date) == year).filter(extract('month', Event.date) == month).filter(extract('day', Event.date) == date).filter_by(user_id = user.id).all()
             for event in events: 
                 all_events.append(event.to_dict())
-
-        print("with date ", all_events)
         return json.dumps(all_events)
 
 
@@ -125,7 +114,6 @@ def get_events():
 def delete():
     if request.method == 'POST':
         event_id = request.form.get("id")
-        print("ID ", event_id)
         event_to_delete = Event.query.filter_by(id=event_id).first()
         db.session.delete(event_to_delete)
         db.session.commit()
@@ -139,8 +127,6 @@ def share_calendar():
     if request.method == 'POST':
         user_email = request.form.get("email")
         share_email = request.form.get("share_email")
-        print(user_email)
-        print(share_email)
         share_user = User.query.filter_by(email=share_email).first()
         if share_user is None: 
             return '', 400
