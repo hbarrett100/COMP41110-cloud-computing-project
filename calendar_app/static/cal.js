@@ -156,9 +156,10 @@ var UIController = (function () {
         // modal to create new event
         newEventModal: function () {
             $('#title').val("");
+            $('#description').val("");
             // set up date and time pickers
             $("#datepicker").flatpickr({
-                dateFormat: 'd-m-yy',
+                dateFormat: 'd-m-Y',
                 defaultDate: new Date(),
                 minDate: "today"
             });
@@ -189,6 +190,7 @@ var UIController = (function () {
         // get values out of new event form 
         getDataFromEventForm: function () {
             var date = $('#datepicker').val();
+            console.log(date);
             var startTime = $('#start-timepicker').val();
             var endTime = $('#end-timepicker').val();
             var title = $('#title').val();
